@@ -9,16 +9,23 @@
 
 ## Render
 
-Build Command:
-`yarn install --immutable && yarn deploy:mvp`
+Se o servico estiver configurado como Docker Web Service:
 
-Start Command:
-`yarn start`
+- Dockerfile Path: `Dockerfile`
+- Docker Command: deixar vazio
+- Build Command: deixar vazio
+- Start Command: deixar vazio
+- Health Check Path: `/health`
 
-Health Check Path:
-`/health`
+O `Dockerfile` e o `docker/entrypoint.js` ja cuidam do build, migrations, seed inicial e start da aplicacao.
 
-## Variáveis obrigatórias em produção
+Se preferir usar Node runtime em vez de Docker:
+
+- Build Command: `corepack enable && yarn install --immutable && yarn build`
+- Start Command: `yarn start`
+- Health Check Path: `/health`
+
+## Variaveis obrigatorias em producao
 
 - `NODE_ENV=production`
 - `PORT`

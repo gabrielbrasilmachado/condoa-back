@@ -1,19 +1,60 @@
 #!/usr/bin/env node
 
 /**
- * Entrypoint script executado ao iniciar o Docker
- * 1. Sincroniza dependencias do projeto
- * 2. Aguarda PostgreSQL estar pronto
- * 3. Aguarda MinIO estar pronto
- * 4. Garante bucket publico de imagens
+ * Entrypoint compartilhado entre Docker local e ambientes hospedados.
+ *
+ * Desenvolvimento local:
+ * 1. Sincroniza dependencias
+ * 2. Aguarda PostgreSQL local
+ * 3. Aguarda MinIO local
+ * 4. Garante bucket publico no MinIO
  * 5. Roda migrations
  * 6. Roda seed inicial
- * 7. Inicia a aplicacao
+ * 7. Inicia a aplicacao em modo dev
+ *
+ * Producao:
+ * 1. Aguarda PostgreSQL configurado por DATABASE_URL ou DB_*
+ * 2. Roda migrations
+ * 3. Roda seed inicial
+ * 4. Inicia a aplicacao compilada
  */
 
 const { spawn } = require('child_process')
 const { Client: PgClient } = require('pg')
 const { Client: MinioClient } = require('minio')
+
+const isProduction = String(process.env.NODE_ENV || '').toLowerCase() === 'production'
+const storageProvider = String(process.env.STORAGE_PROVIDER || 'minio').toLowerCase()
+const shouldUseMinio = storageProvider === 'minio'
+
+function parseBoolean(value, fallback = false) {
+  if (!value) {
+    return fallback
+  }
+
+  return value.trim().toLowerCase() === 'true'
+}
+
+function getDatabaseConnectionConfig() {
+  const databaseUrl = process.env.DATABASE_URL?.trim()
+  const useSsl = parseBoolean(process.env.DB_SSL, false)
+
+  if (databaseUrl) {
+    return {
+      connectionString: databaseUrl,
+      ssl: useSsl ? { rejectUnauthorized: false } : false,
+    }
+  }
+
+  return {
+    host: process.env.DB_HOST || 'db',
+    port: Number(process.env.DB_PORT) || 5432,
+    user: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DB_NAME || 'condoa',
+    ssl: useSsl ? { rejectUnauthorized: false } : false,
+  }
+}
 
 async function installDependencies() {
   console.log('Sincronizando dependencias do projeto...')
@@ -29,7 +70,7 @@ async function installDependencies() {
         console.log('Dependencias sincronizadas com sucesso!')
         resolve()
       } else {
-        console.error('Erro ao sincronizar dependencias')
+        console.error('Erro ao sincronizar dependencias.')
         reject(new Error(`Install failed with code ${code}`))
       }
     })
@@ -44,18 +85,12 @@ async function installDependencies() {
 async function waitForDatabase() {
   console.log('Aguardando PostgreSQL...')
 
-  const maxAttempts = 30
+  const maxAttempts = isProduction ? 60 : 30
   let attempts = 0
 
   while (attempts < maxAttempts) {
     try {
-      const client = new PgClient({
-        host: process.env.DB_HOST || 'db',
-        port: Number(process.env.DB_PORT) || 5432,
-        user: process.env.DB_USERNAME || 'postgres',
-        password: process.env.DB_PASSWORD || 'postgres',
-        database: process.env.DB_NAME || 'condoa',
-      })
+      const client = new PgClient(getDatabaseConnectionConfig())
 
       await client.connect()
       await client.end()
@@ -71,7 +106,7 @@ async function waitForDatabase() {
     }
   }
 
-  console.error('PostgreSQL nao respondeu apos 30 segundos')
+  console.error(`PostgreSQL nao respondeu apos ${maxAttempts} segundos.`)
   process.exit(1)
 }
 
@@ -107,7 +142,7 @@ async function waitForMinio() {
     }
   }
 
-  console.error('MinIO nao respondeu apos 30 segundos')
+  console.error('MinIO nao respondeu apos 30 segundos.')
   process.exit(1)
 }
 
@@ -150,6 +185,32 @@ async function configurePublicBucket() {
   console.log('Bucket configurado para leitura publica.')
 }
 
+async function runBuild() {
+  console.log('Compilando aplicacao...')
+
+  return new Promise((resolve, reject) => {
+    const build = spawn('yarn', ['build'], {
+      stdio: 'inherit',
+      shell: true,
+    })
+
+    build.on('close', (code) => {
+      if (code === 0) {
+        console.log('Aplicacao compilada com sucesso!')
+        resolve()
+      } else {
+        console.error('Erro ao compilar a aplicacao.')
+        reject(new Error(`Build failed with code ${code}`))
+      }
+    })
+
+    build.on('error', (err) => {
+      console.error('Erro ao compilar a aplicacao:', err)
+      reject(err)
+    })
+  })
+}
+
 async function runMigrations() {
   console.log('Executando migrations...')
 
@@ -164,7 +225,7 @@ async function runMigrations() {
         console.log('Migrations executadas com sucesso!')
         resolve()
       } else {
-        console.error('Erro ao executar migrations')
+        console.error('Erro ao executar migrations.')
         reject(new Error(`Migration failed with code ${code}`))
       }
     })
@@ -190,7 +251,7 @@ async function runSeed() {
         console.log('Seed inicial executado com sucesso!')
         resolve()
       } else {
-        console.error('Erro ao executar seed inicial')
+        console.error('Erro ao executar seed inicial.')
         reject(new Error(`Seed failed with code ${code}`))
       }
     })
@@ -205,13 +266,14 @@ async function runSeed() {
 async function startApplication() {
   console.log('Iniciando aplicacao...')
 
-  const app = spawn('yarn', ['dev'], {
+  const command = isProduction ? ['start'] : ['dev']
+  const app = spawn('yarn', command, {
     stdio: 'inherit',
     shell: true,
   })
 
   app.on('error', (err) => {
-    console.error('Erro ao iniciar aplicacao:', err)
+    console.error('Erro ao iniciar a aplicacao:', err)
     process.exit(1)
   })
 
@@ -227,10 +289,19 @@ async function startApplication() {
 
 async function main() {
   try {
-    await installDependencies()
+    if (!isProduction) {
+      await installDependencies()
+    } else {
+      await runBuild()
+    }
+
     await waitForDatabase()
-    await waitForMinio()
-    await configurePublicBucket()
+
+    if (shouldUseMinio) {
+      await waitForMinio()
+      await configurePublicBucket()
+    }
+
     await runMigrations()
     await runSeed()
     await startApplication()
