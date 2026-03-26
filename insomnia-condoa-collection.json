@@ -1,0 +1,884 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-03-20T18:00:00.000Z",
+  "__export_source": "codex-condoa",
+  "resources": [
+    {
+      "_id": "wrk_condoa",
+      "_type": "workspace",
+      "parentId": null,
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Condoa API",
+      "description": "Collection de testes do backend Condoa",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_condoa_base",
+      "_type": "environment",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3333",
+        "token": "",
+        "admin_email": "admin@condoa.local",
+        "admin_password": "12345678",
+        "user_id": "",
+        "category_id": "",
+        "condominium_id": "",
+        "address_id": "",
+        "item_id": "",
+        "image_id": ""
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "token",
+          "admin_email",
+          "admin_password",
+          "user_id",
+          "category_id",
+          "condominium_id",
+          "address_id",
+          "item_id",
+          "image_id"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Health",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 10
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Auth",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 20
+    },
+    {
+      "_id": "fld_users",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Users",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 30
+    },
+    {
+      "_id": "fld_categories",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Categories",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 40
+    },
+    {
+      "_id": "fld_condominiums",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Condominiums",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 50
+    },
+    {
+      "_id": "fld_addresses",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Addresses",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 60
+    },
+    {
+      "_id": "fld_items",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Items",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 70
+    },
+    {
+      "_id": "fld_item_images",
+      "_type": "request_group",
+      "parentId": "wrk_condoa",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Item Images",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 80
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "parentId": "fld_health",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Health Check",
+      "url": "{{ _.base_url }}/health",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Login",
+      "url": "{{ _.base_url }}/auth/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ _.admin_email }}\",\n  \"password\": \"{{ _.admin_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_me",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Me",
+      "url": "{{ _.base_url }}/auth/me",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_refresh",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Refresh",
+      "url": "{{ _.base_url }}/auth/refresh",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -850
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Logout",
+      "url": "{{ _.base_url }}/auth/logout",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_users_list",
+      "_type": "request",
+      "parentId": "fld_users",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Users",
+      "url": "{{ _.base_url }}/users",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_users_create",
+      "_type": "request",
+      "parentId": "fld_users",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Create User",
+      "url": "{{ _.base_url }}/users",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Usuario Teste\",\n  \"email\": \"usuario@condoa.local\",\n  \"phone\": \"(11) 99999-9999\",\n  \"password\": \"12345678\",\n  \"role\": \"user\",\n  \"status\": \"active\",\n  \"condominiumId\": \"{{ _.condominium_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_users_get",
+      "_type": "request",
+      "parentId": "fld_users",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Get User By Id",
+      "url": "{{ _.base_url }}/users/{{ _.user_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_users_status",
+      "_type": "request",
+      "parentId": "fld_users",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Update User Status",
+      "url": "{{ _.base_url }}/users/{{ _.user_id }}/status",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"active\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_categories_list",
+      "_type": "request",
+      "parentId": "fld_categories",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Categories",
+      "url": "{{ _.base_url }}/categories",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_categories_create",
+      "_type": "request",
+      "parentId": "fld_categories",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Create Category",
+      "url": "{{ _.base_url }}/categories",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Alimentos\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_categories_get",
+      "_type": "request",
+      "parentId": "fld_categories",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Get Category By Id",
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_categories_update",
+      "_type": "request",
+      "parentId": "fld_categories",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Update Category",
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Higiene\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_categories_delete",
+      "_type": "request",
+      "parentId": "fld_categories",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Delete Category",
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -600
+    },
+    {
+      "_id": "req_condominiums_list",
+      "_type": "request",
+      "parentId": "fld_condominiums",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Condominiums",
+      "url": "{{ _.base_url }}/condominiums",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_condominiums_create",
+      "_type": "request",
+      "parentId": "fld_condominiums",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Create Condominium",
+      "url": "{{ _.base_url }}/condominiums",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Condominio Primavera\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_condominiums_get",
+      "_type": "request",
+      "parentId": "fld_condominiums",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Get Condominium By Id",
+      "url": "{{ _.base_url }}/condominiums/{{ _.condominium_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_condominiums_update",
+      "_type": "request",
+      "parentId": "fld_condominiums",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Update Condominium",
+      "url": "{{ _.base_url }}/condominiums/{{ _.condominium_id }}",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Condominio Primavera Azul\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_condominiums_delete",
+      "_type": "request",
+      "parentId": "fld_condominiums",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Delete Condominium",
+      "url": "{{ _.base_url }}/condominiums/{{ _.condominium_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -600
+    },
+    {
+      "_id": "req_addresses_list",
+      "_type": "request",
+      "parentId": "fld_addresses",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Addresses",
+      "url": "{{ _.base_url }}/addresses",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_addresses_create",
+      "_type": "request",
+      "parentId": "fld_addresses",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Create Address",
+      "url": "{{ _.base_url }}/addresses",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"zipCode\": \"04538132\",\n  \"name\": \"Rua das Flores\",\n  \"number\": \"123\",\n  \"district\": \"Centro\",\n  \"city\": \"Sao Paulo\",\n  \"state\": \"SP\",\n  \"complement\": \"Bloco A\",\n  \"condominiumId\": \"{{ _.condominium_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_addresses_get",
+      "_type": "request",
+      "parentId": "fld_addresses",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Get Address By Id",
+      "url": "{{ _.base_url }}/addresses/{{ _.address_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_addresses_update",
+      "_type": "request",
+      "parentId": "fld_addresses",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Update Address",
+      "url": "{{ _.base_url }}/addresses/{{ _.address_id }}",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"district\": \"Jardins\",\n  \"complement\": \"Torre 2\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_addresses_delete",
+      "_type": "request",
+      "parentId": "fld_addresses",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Delete Address",
+      "url": "{{ _.base_url }}/addresses/{{ _.address_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -600
+    },
+    {
+      "_id": "req_items_list",
+      "_type": "request",
+      "parentId": "fld_items",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Items",
+      "url": "{{ _.base_url }}/items",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_items_create",
+      "_type": "request",
+      "parentId": "fld_items",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Create Item",
+      "url": "{{ _.base_url }}/items",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Cesta basica\",\n  \"description\": \"Cesta basica fechada e dentro da validade.\",\n  \"categoryId\": \"{{ _.category_id }}\",\n  \"userId\": \"{{ _.user_id }}\",\n  \"expiredAt\": \"2026-12-31T23:59:59.000Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_items_get",
+      "_type": "request",
+      "parentId": "fld_items",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Get Item By Id",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_items_update",
+      "_type": "request",
+      "parentId": "fld_items",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Update Item",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"donated\",\n  \"description\": \"Item reservado e ja combinado para doacao.\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_items_delete",
+      "_type": "request",
+      "parentId": "fld_items",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Delete Item",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -600
+    },
+    {
+      "_id": "req_item_images_list",
+      "_type": "request",
+      "parentId": "fld_item_images",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "List Item Images",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}/images",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_item_images_upload",
+      "_type": "request",
+      "parentId": "fld_item_images",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Upload Item Image",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}/images",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "param_is_primary",
+            "name": "isPrimary",
+            "value": "false",
+            "disabled": false
+          },
+          {
+            "id": "param_file",
+            "name": "file",
+            "type": "file",
+            "fileName": "",
+            "value": "",
+            "disabled": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_item_images_delete",
+      "_type": "request",
+      "parentId": "fld_item_images",
+      "modified": 1774029600000,
+      "created": 1774029600000,
+      "name": "Delete Item Image",
+      "url": "{{ _.base_url }}/items/{{ _.item_id }}/images/{{ _.image_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -800
+    }
+  ]
+}
+
