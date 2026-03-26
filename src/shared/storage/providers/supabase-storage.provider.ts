@@ -3,7 +3,7 @@ import {
   type StorageProvider,
   type StorageUploadInput,
 } from '../contracts/storage-provider.contract'
-import { getStorageConfig } from '../config/storage.config'
+import { getSupabaseStorageConfig } from '../config/storage.config'
 import { type StorageUploadResult } from '../types/storage-upload-result'
 
 const readStreamToBuffer = async (stream: Readable): Promise<Buffer> => {
@@ -24,7 +24,7 @@ const encodeStorageKey = (key: string): string => {
 }
 
 export class SupabaseStorageProvider implements StorageProvider {
-  private readonly storageConfig = getStorageConfig()
+  private readonly storageConfig = getSupabaseStorageConfig()
 
   private readonly baseUrl = this.storageConfig.supabase.url
 

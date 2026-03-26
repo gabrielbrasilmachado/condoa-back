@@ -4,7 +4,7 @@ import {
   StorageProvider,
   StorageUploadInput,
 } from '../contracts/storage-provider.contract'
-import { getStorageConfig } from '../config/storage.config'
+import { getMinioStorageConfig } from '../config/storage.config'
 import { StorageUploadResult } from '../types/storage-upload-result'
 
 type MinioClientInstance = {
@@ -21,9 +21,9 @@ type MinioClientInstance = {
 }
 
 export class MinioStorageProvider implements StorageProvider {
-  private readonly client: MinioClientInstance
+  private readonly storageConfig = getMinioStorageConfig()
 
-  private readonly storageConfig = getStorageConfig()
+  private readonly client: MinioClientInstance
 
   private readonly bucket = this.storageConfig.minio.bucket
 

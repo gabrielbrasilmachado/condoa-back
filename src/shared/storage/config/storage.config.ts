@@ -2,8 +2,8 @@ import { StorageConfigurationError } from '../errors/storage-configuration.error
 
 export type StorageProviderName = 'minio' | 'supabase'
 
-export type StorageConfig = {
-  provider: StorageProviderName
+export type MinioStorageConfig = {
+  provider: 'minio'
   minio: {
     host: string
     port: number
@@ -13,12 +13,18 @@ export type StorageConfig = {
     secretKey: string
     bucket: string
   }
+}
+
+export type SupabaseStorageConfig = {
+  provider: 'supabase'
   supabase: {
     url: string
     serviceRoleKey: string
     bucket: string
   }
 }
+
+export type StorageConfig = MinioStorageConfig | SupabaseStorageConfig
 
 const DEFAULT_STORAGE_PROVIDER: StorageProviderName = 'minio'
 
@@ -102,11 +108,13 @@ const getRequiredEnvValue = (...keys: string[]): string => {
   return value
 }
 
-export const getStorageConfig = (): StorageConfig => {
-  const provider = parseStorageProvider(getEnvValue('STORAGE_PROVIDER'))
+export const getStorageProviderName = (): StorageProviderName => {
+  return parseStorageProvider(getEnvValue('STORAGE_PROVIDER'))
+}
 
+export const getMinioStorageConfig = (): MinioStorageConfig => {
   return {
-    provider,
+    provider: 'minio',
     minio: {
       host: getRequiredEnvValue('MINIO_HOST'),
       port: parsePort(getRequiredEnvValue('MINIO_PORT')),
@@ -116,10 +124,26 @@ export const getStorageConfig = (): StorageConfig => {
       secretKey: getRequiredEnvValue('MINIO_PASSWORD'),
       bucket: getRequiredEnvValue('MINIO_BUCKET'),
     },
+  }
+}
+
+export const getSupabaseStorageConfig = (): SupabaseStorageConfig => {
+  return {
+    provider: 'supabase',
     supabase: {
       url: parseUrl(getRequiredEnvValue('SUPABASE_URL')),
       serviceRoleKey: getRequiredEnvValue('SUPABASE_SERVICE_ROLE_KEY'),
       bucket: getRequiredEnvValue('SUPABASE_STORAGE_BUCKET'),
     },
   }
+}
+
+export const getStorageConfig = (): StorageConfig => {
+  const provider = getStorageProviderName()
+
+  if (provider === 'supabase') {
+    return getSupabaseStorageConfig()
+  }
+
+  return getMinioStorageConfig()
 }
